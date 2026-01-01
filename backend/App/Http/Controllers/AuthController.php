@@ -9,35 +9,34 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-        public function register(Request $request)
-    {
-        // Validate input
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'email',
-                'unique:users',
-                'regex:/^[a-zA-Z0-9._%+-]+@g\.batstateu\.edu\.ph$/'
-            ],
-            'password' => 'required|string|min:6|confirmed'
-        ]);
+        
+       public function register(Request $request)
+        {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => [
+                    'required',
+                    'email',
+                    'unique:users',
+                    'regex:/^[a-zA-Z0-9._%+-]+@g\.batstateu\.edu\.ph$/'
+                ],
+                'password' => 'required|string|min:6'
+            ]);
 
-        // Create user
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        // Generate token
-        $token = $user->createToken('auth_token')->plainTextToken;
+            $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-        ], 201);
-    }
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+            ], 201);
+        }
+
 
     public function login(Request $request)
     {
